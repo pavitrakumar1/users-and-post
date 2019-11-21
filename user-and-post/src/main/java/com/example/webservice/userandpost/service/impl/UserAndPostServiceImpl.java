@@ -129,9 +129,9 @@ public class UserAndPostServiceImpl implements UserAndPostService {
 	 */
 
 	@Override
-	public Map<Integer, List<Post>> getUsersPostsMapping() {
+	public Map<User, List<Post>> getUsersPostsMapping() {
 		logger.info("Invoking API to fetch all users and all posts");
-		Map<Integer, List<Post>> userAndPosts = new HashMap<>();
+		Map<User, List<Post>> userAndPosts = new HashMap<>();
 
 		//Make in-memory data manipulation to avoid un-necessary API calls.
 		List<User> users = getAllUsers();
@@ -140,35 +140,26 @@ public class UserAndPostServiceImpl implements UserAndPostService {
 		//It's logical to loop over posts rather than user, as we are trying to segregate posts into user group.
 		for(Post post : posts) {
 			int userId = post.getUserId();
-			if(userAndPosts.get(userId) != null) {
-				userAndPosts.get(userId).add(post);
+			User user = getUserMap(users).get(userId);
+			if(userAndPosts.get(user) != null) {
+				userAndPosts.get(user).add(post);
 			}else {
 				List<Post> newList = new ArrayList<Post>();
 				newList.add(post);
-				userAndPosts.put(userId, newList);
+				userAndPosts.put(user, newList);
 			}
 		}
-		
-		//filtering for invalid user and invalid post.
-		
-		Set<Integer> postsKey = userAndPosts.keySet();
-		Set<Integer> usersKey = new HashSet<>();
-		for(User user : users) {
-			usersKey.add(user.getId());
-		}
-		
-		boolean invalidUsers = usersKey.removeAll(postsKey); // Removing invalid users from users-list
-		boolean invalidPosts = postsKey.removeAll(usersKey); //Removing invalid posts from remaining users-list
-		
-		if(invalidUsers) {
-			logger.warn("Users with no post", usersKey);
-		}
-		if(invalidPosts) {
-			logger.warn("Posts with no uers", postsKey);
-		}
-		
+			
 		logger.info("Finised call to fetch all users and related posts");
 		return userAndPosts;
+	}
+	
+	private Map <Integer, User> getUserMap(List<User> userList) {
+		Map <Integer, User> userMap = new HashMap<Integer, User>();
+		for(User user : userList) {
+			userMap.put(user.getId(), user);
+		}
+		return userMap;
 	}
 
 }
