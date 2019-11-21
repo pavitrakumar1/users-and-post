@@ -16,7 +16,7 @@ public interface UserAndPostService {
 
 	public List<Post> getPostsForUser(int userId);
 	
-	public Map<Integer,List<Post>> getUsersPostsMapping();
+	public Map<User,List<Post>> getUsersPostsMapping();
 
 	//public Post getPostForUser(int userId, int postId); 
 
