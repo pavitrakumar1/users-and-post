@@ -100,9 +100,9 @@ public class UsersAndPostsController {
 	}
 	 
 	@GetMapping("/usersandposts")
-	public Map<Integer,List<Post>> getUsersAndPosts() throws Exception {
+	public Map<User,List<Post>> getUsersAndPosts() throws Exception {
 		logger.info("Invoking getAllUsersAndRelatedPosts");
-		Map<Integer,List<Post>> userPostsMap = new HashMap<>();
+		Map<User,List<Post>> userPostsMap = new HashMap<>();
 		try {
 			userPostsMap = service.getUsersPostsMapping();
 		}
